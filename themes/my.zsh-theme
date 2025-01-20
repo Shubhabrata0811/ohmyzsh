@@ -1,13 +1,16 @@
 # Return status indicator
 local ret_status="%(?:%{$fg_bold[green]%} :%{$fg_bold[red]%} %s)"
 
+local ret_end_status="%(?:%{$fg_bold[green]%}> :%{$fg_bold[red]%}> %s)"
+
+
 # Environment prompt:
 env_prompt() {
   # Check if any .js files exist for Node.js and Deno.js
-  local js_files=$(find . -maxdepth 1 -name "*.js" -print -quit)
+  local js_files=$(find . -maxdepth 3 -name "*.js" -print -quit)
   
   # Check if any .py files exist for Python
-  local py_files=$(find . -maxdepth 1 -name "*.py" -print -quit)
+  local py_files=$(find . -maxdepth 3 -name "*.py" -print -quit)
 
   # Get current Node.js and Deno.js version if .js files exist
   local node_version=""
@@ -93,7 +96,7 @@ git_info() {
     [[ "$unstaged_count" -gt 0 ]] && git_prompt+=" | Unstaged: $unstaged_count"
     [[ "$untracked_count" -gt 0 ]] && git_prompt+=" | Untracked: $untracked_count"
 
-    echo "%{$fg_bold[blue]%}[git: $git_prompt%{$fg_bold[blue]%}]%{$reset_color%}"
+    echo "%{$fg_bold[blue]%} [git: $git_prompt%{$fg_bold[blue]%}]%{$reset_color%}"
   fi
 }
 
@@ -102,12 +105,12 @@ svn_info() {
   local svn_status=$(svn status 2>/dev/null)
   if [[ -n "$svn_status" ]]; then
     local dirty=$(echo "$svn_status" | grep -c "^[AMDR]")
-    echo "%{$fg_bold[red]%}[svn: $dirty changes]%{$reset_color%}"
+    echo "%{$fg_bold[red]%} [svn: $dirty changes]%{$reset_color%}"
   fi
 }
 
 # Main prompt configuration
-PROMPT='${ret_status}%{$fg_bold[green]%}%{$fg[cyan]%}%c $(git_info) $(svn_info) $(env_prompt)%{$reset_color%} '
+PROMPT='${ret_status}%{$fg_bold[green]%}%{$fg[cyan]%}%c$(git_info)$(svn_info)$(env_prompt) ${ret_end_status}%{$reset_color%} '
 
 
 # Base and repo name colors
