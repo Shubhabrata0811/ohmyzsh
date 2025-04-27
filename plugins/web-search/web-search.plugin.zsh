@@ -26,6 +26,7 @@ function web_search() {
     scholar         "https://scholar.google.com/scholar?q="
     ask             "https://www.ask.com/web?q="
     youtube         "https://www.youtube.com/results?search_query="
+    ytmusic         "https://music.youtube.com/search?q="
     deepl           "https://www.deepl.com/translator#auto/auto/"
     dockerhub       "https://hub.docker.com/search?q="
     npmpkg          "https://www.npmjs.com/search?q="
@@ -81,6 +82,7 @@ alias archive='web_search archive'
 alias scholar='web_search scholar'
 alias ask='web_search ask'
 alias youtube='web_search youtube'
+alias ytmusic='web_search ytmusic'
 alias deepl='web_search deepl'
 alias dockerhub='web_search dockerhub'
 alias npmpkg='web_search npmpkg'

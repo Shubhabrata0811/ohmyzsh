@@ -5,7 +5,6 @@ local ret_end_status="%(?:
 %{$fg_bold[green]%} :
 %{$fg_bold[red]%} %s)"
 
-
 # Environment prompt:
 env_prompt() {
 
@@ -14,6 +13,8 @@ env_prompt() {
   local py_files=$(find . -maxdepth 1 -name "*.py" -print -quit)
 
   local java_files=$(find . -maxdepth 1 -name "*.java" -print -quit)
+
+  local go_files=$(find . -maxdepth 1 -name "*.go" -print -quit)
 
   local java_version=""
   if [[ -n "$java_files" ]]; then
@@ -35,31 +36,31 @@ env_prompt() {
     python_version=$(python --version 2>/dev/null) || python_version=$(python3 --version 2>/dev/null)
   fi
 
-  #local git_version=""
-  #if git rev-parse --is-inside-work-tree &>/dev/null; then
-  #  git_version=$(git --version | cut -d' ' -f3)
-  #fi
+  local go_version=""
+  if [[ -n "$go_files" ]]; then
+    go_version=$(go version 2>/dev/null | awk '{print $3}')
+  fi
 
   local env_prompt=""
   if [[ -n "$java_version" ]]; then
-    env_prompt+=" %{$fg[red]%}\ue256 $java_version%{$reset_color%}"
+    env_prompt+=" %{$fg[red]%} $java_version%{$reset_color%}"
   fi
 
   if [[ -n "$node_version" ]]; then
-    env_prompt+=" %{$fg[green]%}\ued0d $node_version%{$reset_color%}"
+    env_prompt+=" %{$fg[green]%} $node_version%{$reset_color%}"
   fi
 
   if [[ -n "$deno_version" ]]; then
-    env_prompt+=" %{$fg[cyan]%}\ue7c0 $deno_version%{$reset_color%}"
+    env_prompt+=" %{$fg[cyan]%} $deno_version%{$reset_color%}"
   fi
 
   if [[ -n "$python_version" ]]; then
-    env_prompt+=" %{$fg[yellow]%}\ue73c $python_version%{$reset_color%}"
+    env_prompt+=" %{$fg[yellow]%} $python_version%{$reset_color%}"
   fi
-  
-  #if [[ -n "$git_version" ]]; then
-  #  env_prompt+=" %{$fg[green]%}\ue702 $git_version%{$reset_color%}"
-  #fi
+
+  if [[ -n "$go_version" ]]; then
+    env_prompt+=" %{$fg[blue]%} $go_version%{$reset_color%}"
+  fi
 
   echo "$env_prompt"
 }
@@ -79,21 +80,21 @@ git_info() {
     local untracked_count=$(echo "$git_status" | grep -c "^\? ")
 
 
-    local git_prompt="\ue725 $branch_name"
-    
+    local git_prompt=" $branch_name"
 
-    [[ -n "$upstream" ]] && git_prompt+=" \uf09b $upstream"
-    
+
+    [[ -n "$upstream" ]] && git_prompt+="  $upstream"
+
 
     if [[ -n "$ahead_count" && "$ahead_count" -gt 0 ]]; then
-      git_prompt+=" %{$fg[red]%}\ueb41 $ahead_count%{$reset_color%}"
+      git_prompt+=" %{$fg[red]%} $ahead_count%{$reset_color%}"
     else
       git_prompt+=" %{$fg[green]%}✓%{$reset_color%}"
     fi
     
     [[ -n "$behind_count" ]] && git_prompt+=" %{$fg[yellow]%}↓$behind_count%{$reset_color%}"
 
-    git_prompt+=" |%{$fg[cyan]%}\ue729 $total_commits%{$reset_color%}"
+    git_prompt+=" |%{$fg[cyan]%} $total_commits%{$reset_color%}"
 
     [[ "$staged_count" -gt 0 ]] && git_prompt+=" | Staged: $staged_count"
     [[ "$unstaged_count" -gt 0 ]] && git_prompt+=" | Unstaged: $unstaged_count"
